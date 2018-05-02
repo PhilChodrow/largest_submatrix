@@ -1,2 +1,3 @@
-# largest_submatrix
+# Largest Submatrix
+
 Course project on largest submatrix problems. 
