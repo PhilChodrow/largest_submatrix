@@ -53,11 +53,51 @@ def LAS(A, k, n_iters = 1):
     # return result as dict
     return({'ix' : ix, 'val': val})
 	
+def IGP(A, k):
+	'''
+    	Algorithm IGP from https://arxiv.org/pdf/1602.08529.pdf
+    '''
 
-def IGP_search(k):
-	print 'not implemented'
+    m, n = A.shape
 
+    row_part = range(0, m+1, m/k)
+    col_part = range(0, n+1, n/k)
 
-def IP(A, m = None, n = None):
-	print 'not implemented'
-	
+    def column_update(i):
+        C_n = np.arange(col_part[i-1], col_part[i])
+        A_sub = submatrix(A, 
+                 {'rows'   : ix['rows'],
+                  'columns': C_n})
+
+        new = np.argmax(A_sub.sum(axis = 0))
+
+        ix['columns'] = np.append(ix['columns'], C_n[new]).astype('int')
+
+    def row_update(i):
+        R_n = np.arange(row_part[i-1], row_part[i])
+
+        A_sub = submatrix(A,
+                          {'rows'   : R_n,
+                           'columns': ix['columns']})
+        new = np.argmax(A_sub.sum(axis = 1))
+
+        ix['rows'] = np.append(ix['rows'], R_n[new]).astype('int')
+
+        i += 1
+    
+    
+    # initialize
+    ix = {'rows'    : np.random.choice(row_part[1], 1),
+          'columns' : []}     
+    column_update(1)
+
+    i = 2
+    
+    # main loop
+    while i <= k:
+        row_update(i)
+        column_update(i)
+        i += 1
+    
+    return {'ix': ix, 
+            'val': value(A, ix)}
