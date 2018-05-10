@@ -1,7 +1,7 @@
 
 import numpy as np
 
-def read_data(path):
+def read_data(path, clean_nan = False):
 	m = np.loadtxt(path)
 	m[:,0:2] = m[:,0:2] / (2.5*10**5)
 
@@ -14,4 +14,7 @@ def read_data(path):
 	    ix_i = ix[i,:]
 	    container[ix_i[0], ix_i[1]] = m[i,2]
 
+	if clean_nan:
+		container = np.nan_to_num(container)
+		
 	return container
